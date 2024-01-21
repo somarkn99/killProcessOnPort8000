@@ -6,26 +6,40 @@ This repository contains a Windows batch script that identifies and terminates a
 
 ## Prerequisites
 
-Windows Operating System
-Administrative privileges to execute batch files that can terminate processes
-Installation
-Download the killProcessOn8000.bat file from this repository.
-Save the file to a convenient location on your system.
+- Windows Or Linux Operating System
+- Administrative or Root privileges to execute batch files that can terminate processes
+- Download the killProcessOn8000 file from this repository.
+- Save the file to a convenient location on your system.
 
 ## Usage
 
 To use the script, follow these steps:
 
-- Navigate to the folder where you saved killProcessOn8000.bat.
-- Right-click on the file and select "Run as administrator". This is necessary to provide the script with the necessary permissions to terminate processes.
+- Navigate to the folder where you saved killProcessOn8000.
+- For Windows Users: Right-click on the file and select "Run as administrator". This is necessary to provide the script with the necessary permissions to terminate processes.
 - The script will automatically identify and terminate any process using port 8000. If no such process is found, it will display a message accordingly.
 
 ## Note
 
-- This script is designed for Windows environments only.
+- This script is designed for Windows & Linux environments only.
 - Be cautious when running this script, as it will forcefully terminate the process using port 8000, which could lead to data loss in some applications.
 - Not all of these codes have to be from my pure work, there are many of them on the Internet that I may have done some but not limited to some modification, improvement, or modification of the appearance of the code to become readable, understandable or appropriate to the place of use.
   If you have any code you think will be useful and people will use frequently in many projects do not hesitate to do a pull request to this repo.
+
+## Contributors:
+
+- [Somar Kesen](https://github.com/somarkn99)
+- [Eyad-Mohammed-Osama](https://github.com/Eyad-Mohammed-Osama)
+
+## Changelog
+
+### 1.2
+
+- Add file for Linux environment
+
+### 1.0
+
+- For Windows environment only
 
 ## Let's Connect
 
