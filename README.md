@@ -33,6 +33,11 @@ To use the script, follow these steps:
 
 ## Changelog
 
+## 1.3
+
+- Refactor the codes for the efficient & quality.
+- Add comments To help those who want to develop after these modifications understand the sequence of events
+
 ### 1.2
 
 - Add file for Linux environment

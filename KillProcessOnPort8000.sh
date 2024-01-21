@@ -1,37 +1,56 @@
 #!/bin/bash
 
+# Define exit status constants
 SUCCESSFUL_STATUS=0
 NO_ROOT_PRIVILEGES_STATUS=1
 NETSTAT_NOT_FOUND_STATUS=2
 
-if [ "$EUID" -ne 0 ] # check if the running user is root
-    then echo "This script must be run using as root";
+# Check if the running user is root. If not, exit with an appropriate status.
+if [ "$EUID" -ne 0 ]; then 
+    echo "This script must be run as root"
     exit $NO_ROOT_PRIVILEGES_STATUS
 fi
 
-if [ -z $(command -v netstat) ] # check if the netstat utility is installed on the device
-then
-    echo "This script requires the netstat command line utility to be installed";
+# Check if the netstat utility is installed. If not, exit with an appropriate status.
+if ! command -v netstat &> /dev/null; then
+    echo "This script requires the netstat command line utility to be installed"
     exit $NETSTAT_NOT_FOUND_STATUS
 fi
 
-# get the list of all processes (pid/name) which has server sockets that listens to all TCP and UDP connections
-# and filter only those that listen on port 8000, then extract the part that contains the process id and process name
-PROCESS=$(netstat -tulpn | grep -i ":8000" | awk '{print $7}')
+# Get the list of all processes that use port 8000.
+# The netstat command lists network connections, protocols, and listening ports.
+# The output is filtered to find entries with port 8000, and awk extracts the process info.
+PROCESS_LIST=$(netstat -tulpn | grep -i ":8000" | awk '{print $7}')
 
-if [ -z $PROCESS ] # check if there are actual running processes from the result, if not then exit the script successfully
-then
-    echo "There are no processes that uses port 8000 on this device"
+# Check if there are actual running processes using port 8000.
+if [ -z "$PROCESS_LIST" ]; then
+    echo "There are no processes using port 8000 on this device"
     exit $SUCCESSFUL_STATUS
 fi
 
-# normally, the seventh segment returned by the awk command from the previous command contains process information in
-# the form (process id/process name), so we'll extract the process id and process name by splitting the string using
-# forward slash (/) as a delimiter, this gives us an array which contains two elements
-PROCESSID=$(echo $PROCESS | awk '{split($1,chunks, "/"); print chunks[1]}')     # the first element is the process id
-PROCESSNAME=$(echo $PROCESS | awk '{split($1,chunks, "/"); print chunks[2]}')   # the second element is the process name
+# Check for multiple processes using the same port.
+# If found, it prompts manual checking.
+if echo "$PROCESS_LIST" | grep -q " "; then
+    echo "Multiple processes are using port 8000. Please check manually."
+    exit $SUCCESSFUL_STATUS
+fi
 
-echo "Killing process ($PROCESSNAME) with ID ($PROCESSID) ..."  # print an informative message
-kill -9 $PROCESSID                                              # send a kill signal to the process
-echo "Process killed successfully"
+# Extract the process ID and name from the process list.
+# The 'cut' command splits the string (process id/name) using '/' as delimiter.
+PROCESS_ID=$(echo "$PROCESS_LIST" | cut -d'/' -f1)   # Extracts the process ID
+PROCESS_NAME=$(echo "$PROCESS_LIST" | cut -d'/' -f2) # Extracts the process name
+
+# Informing the user about the process being killed.
+echo "Killing process ($PROCESS_NAME) with ID ($PROCESS_ID) ..."
+
+# Attempt to kill the process with the extracted process ID.
+# If successful, prints a confirmation message. Otherwise, prints an error message.
+if kill -9 "$PROCESS_ID"; then
+    echo "Process killed successfully"
+else
+    echo "Failed to kill process. Please check manually."
+    exit 1
+fi
+
+# Exit the script successfully if everything goes as planned.
 exit $SUCCESSFUL_STATUS
