@@ -1,5 +1,10 @@
 # Kill Process on Port 8000 Batch Script
 
+![GitHub contributors](https://img.shields.io/github/contributors/somarkn99/killProcessOnPort8000)
+![GitHub forks](https://img.shields.io/github/forks/somarkn99/killProcessOnPort8000)
+![GitHub Repo stars](https://img.shields.io/github/stars/somarkn99/killProcessOnPort8000)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/somarkn99/killProcessOnPort8000)
+
 ## Description
 
 This repository contains a Windows batch script that identifies and terminates any process that is using port 8000. It's particularly useful for developers who frequently deal with port conflicts, especially when running local servers or applications that default to port 8000.
