@@ -9,15 +9,19 @@ class ProcessManager:
         self.system = platform.system()
 
     def is_admin(self):
+        # Check if the current user has administrative privileges
         if self.system == "Windows":
             try:
                 return ctypes.windll.shell32.IsUserAnAdmin()
             except:
                 return False
-        return os.getuid() == 0  # For Unix systems
+        # For Unix systems, check if the user ID is 0 (root)
+        return os.getuid() == 0
 
     def get_process_info(self):
+        # Get information about the process using the specified port
         process_info = None
+        # Use netstat command to find process using the port
         command = f"netstat -ano | findstr :{self.port}" if self.system == "Windows" else f"netstat -tulpn | grep :{self.port}"
         result = os.popen(command).read()
         lines = result.split('\n')
@@ -26,30 +30,37 @@ class ProcessManager:
             if f":{self.port}" in line:
                 tokens = line.split()
                 if tokens:
+                    # Get PID based on the OS
                     pid = tokens[-1 if self.system in ["Linux", "Darwin"] else 4]
                     process_info = {"pid": pid, "name": self.get_process_name(pid)}
-                    break  # Assuming only one process uses the port
+                    break  # Stop after finding the first process
 
         return process_info
 
     def get_process_name(self, pid):
+        # Retrieve the name of the process given its PID
         command = f"tasklist /fi \"pid eq {pid}\" /fo csv" if self.system == "Windows" else f"ps -p {pid} -o comm="
         result = os.popen(command).read()
+        # Parse the command output to extract the process name
         if self.system == "Windows" and len(result.split('\n')) > 1:
             return result.split('\n')[1].strip('"').split('","')[0]
         return result.strip()
 
     def kill_process(self, process_info):
+        # Kill the process using the provided process information
         print(f"Killing process with ID {process_info['pid']} ({process_info['name'] or 'No name available'})")
         if self.system == "Windows":
             self.kill_windows_process(process_info)
         else:
+            # For Unix systems, use kill command
             os.system(f"kill -9 {process_info['pid']}")
 
     def kill_windows_process(self, process_info):
+        # Special handling for killing a process on Windows
         if self.is_admin():
             os.system(f"taskkill /F /PID {process_info['pid']}")
         else:
+            # If not admin, try to elevate privileges
             ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
 
 def main():

@@ -34,9 +34,14 @@ To use the script, follow these steps:
 ## Contributors:
 
 - [Somar Kesen](https://github.com/somarkn99)
-- [Eyad-Mohammed-Osama](https://github.com/Eyad-Mohammed-Osama)
+- [Eyad Mohammed Osama](https://github.com/Eyad-Mohammed-Osama)
+- [Mahmoud Miehob](https://github.com/MahmoudMiehob)
 
 ## Changelog
+
+## 1.4
+
+- Added python code and executable file for those who didn't want to run direct code
 
 ## 1.3
 
